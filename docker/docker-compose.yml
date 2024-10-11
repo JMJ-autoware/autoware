@@ -34,9 +34,8 @@ services:
       vehicle_model:=sample_vehicle
       sensor_model:=sample_sensor_kit
       rviz:=false
-      print_include_error:=false
 
-  components:
+  component-system:
     image: ghcr.io/autowarefoundation/autoware:universe
     volumes:
       - /dev/shm:/dev/shm
@@ -49,9 +48,161 @@ services:
     command: >
       bash /my_launch/launcher.sh
       config_launch:="autoware_launch planning_simulator.launch.xml"
-      target_launch:="autoware_launch autoware.launch.xml"
+      target_launch:="autoware_launch components/tier4_system_component.launch.xml"
       map_path:=/autoware_map
       vehicle_model:=sample_vehicle
       sensor_model:=sample_sensor_kit
       rviz:=false
-      print_include_error:=false
+
+  component-map:
+    image: ghcr.io/autowarefoundation/autoware:universe
+    volumes:
+      - /dev/shm:/dev/shm
+      - /etc/localtime:/etc/localtime:ro
+      - ./etc/sample-map-planning:/autoware_map:ro
+      - ./etc/launch:/my_launch:ro
+    network_mode: "host"
+    env_file:
+      - ./etc/common.env
+    command: >
+      bash /my_launch/launcher.sh
+      config_launch:="autoware_launch planning_simulator.launch.xml"
+      target_launch:="autoware_launch components/tier4_map_component.launch.xml"
+      map_path:=/autoware_map
+      vehicle_model:=sample_vehicle
+      sensor_model:=sample_sensor_kit
+      rviz:=false
+
+  component-sensing:
+    image: ghcr.io/autowarefoundation/autoware:universe
+    volumes:
+      - /dev/shm:/dev/shm
+      - /etc/localtime:/etc/localtime:ro
+      - ./etc/sample-map-planning:/autoware_map:ro
+      - ./etc/launch:/my_launch:ro
+    network_mode: "host"
+    env_file:
+      - ./etc/common.env
+    command: >
+      bash /my_launch/launcher.sh
+      config_launch:="autoware_launch planning_simulator.launch.xml"
+      target_launch:="autoware_launch components/tier4_sensing_component.launch.xml"
+      map_path:=/autoware_map
+      vehicle_model:=sample_vehicle
+      sensor_model:=sample_sensor_kit
+      rviz:=false
+
+  component-localization:
+    image: ghcr.io/autowarefoundation/autoware:universe
+    volumes:
+      - /dev/shm:/dev/shm
+      - /etc/localtime:/etc/localtime:ro
+      - ./etc/sample-map-planning:/autoware_map:ro
+      - ./etc/launch:/my_launch:ro
+    network_mode: "host"
+    env_file:
+      - ./etc/common.env
+    command: >
+      bash /my_launch/launcher.sh
+      config_launch:="autoware_launch planning_simulator.launch.xml"
+      target_launch:="autoware_launch components/tier4_localization_component.launch.xml"
+      map_path:=/autoware_map
+      vehicle_model:=sample_vehicle
+      sensor_model:=sample_sensor_kit
+      rviz:=false
+
+  component-perception:
+    image: ghcr.io/autowarefoundation/autoware:universe
+    volumes:
+      - /dev/shm:/dev/shm
+      - /etc/localtime:/etc/localtime:ro
+      - ./etc/sample-map-planning:/autoware_map:ro
+      - ./etc/launch:/my_launch:ro
+    network_mode: "host"
+    env_file:
+      - ./etc/common.env
+    command: >
+      bash /my_launch/launcher.sh
+      config_launch:="autoware_launch planning_simulator.launch.xml"
+      target_launch:="autoware_launch components/tier4_perception_component.launch.xml"
+      map_path:=/autoware_map
+      vehicle_model:=sample_vehicle
+      sensor_model:=sample_sensor_kit
+      rviz:=false
+
+  component-planning:
+    image: ghcr.io/autowarefoundation/autoware:universe
+    volumes:
+      - /dev/shm:/dev/shm
+      - /etc/localtime:/etc/localtime:ro
+      - ./etc/sample-map-planning:/autoware_map:ro
+      - ./etc/launch:/my_launch:ro
+    network_mode: "host"
+    env_file:
+      - ./etc/common.env
+    command: >
+      bash /my_launch/launcher.sh
+      config_launch:="autoware_launch planning_simulator.launch.xml"
+      target_launch:="autoware_launch components/tier4_planning_component.launch.xml"
+      map_path:=/autoware_map
+      vehicle_model:=sample_vehicle
+      sensor_model:=sample_sensor_kit
+      rviz:=false
+
+  component-control:
+    image: ghcr.io/autowarefoundation/autoware:universe
+    volumes:
+      - /dev/shm:/dev/shm
+      - /etc/localtime:/etc/localtime:ro
+      - ./etc/sample-map-planning:/autoware_map:ro
+      - ./etc/launch:/my_launch:ro
+    network_mode: "host"
+    env_file:
+      - ./etc/common.env
+    command: >
+      bash /my_launch/launcher.sh
+      config_launch:="autoware_launch planning_simulator.launch.xml"
+      target_launch:="autoware_launch components/tier4_control_component.launch.xml"
+      map_path:=/autoware_map
+      vehicle_model:=sample_vehicle
+      sensor_model:=sample_sensor_kit
+      rviz:=false
+
+  component-api:
+    image: ghcr.io/autowarefoundation/autoware:universe
+    volumes:
+      - /dev/shm:/dev/shm
+      - /etc/localtime:/etc/localtime:ro
+      - ./etc/sample-map-planning:/autoware_map:ro
+      - ./etc/launch:/my_launch:ro
+    network_mode: "host"
+    env_file:
+      - ./etc/common.env
+    command: >
+      bash /my_launch/launcher.sh
+      config_launch:="autoware_launch planning_simulator.launch.xml"
+      target_launch:="autoware_launch components/tier4_autoware_api_component.launch.xml"
+      map_path:=/autoware_map
+      vehicle_model:=sample_vehicle
+      sensor_model:=sample_sensor_kit
+      rviz:=false
+
+  etc:
+    image: ghcr.io/autowarefoundation/autoware:universe
+    volumes:
+      - /dev/shm:/dev/shm
+      - /etc/localtime:/etc/localtime:ro
+      - ./etc/sample-map-planning:/autoware_map:ro
+      - ./etc/launch:/my_launch:ro
+    network_mode: "host"
+    env_file:
+      - ./etc/common.env
+    command: >
+      bash /my_launch/launcher.sh
+      config_launch:="autoware_launch planning_simulator.launch.xml"
+      target_launch:=".*/(global_params|pointcloud_container|vehicle)[.]launch[.].*"
+      map_path:=/autoware_map
+      vehicle_model:=sample_vehicle
+      sensor_model:=sample_sensor_kit
+      rviz:=false
+      target_pkg_resolve:=false
