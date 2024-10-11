@@ -12,18 +12,43 @@ services:
       - DISPLAY
     command: >
       rviz2 -d /opt/autoware/share/autoware_launch/rviz/autoware.rviz
+
+  simulator:
+    image: ghcr.io/autowarefoundation/autoware:universe
+    volumes:
+      - /dev/shm:/dev/shm
+      - /etc/localtime:/etc/localtime:ro
+      - ./etc/sample-map-planning:/autoware_map:ro
+      - ./etc/launch:/my_launch:ro
+    network_mode: "host"
+    env_file:
+      - ./etc/common.env
+    command: >
+      bash /my_launch/launcher.sh
+      config_launch:="autoware_launch planning_simulator.launch.xml"
+      target_launch:="autoware_launch components/tier4_simulator_component.launch.xml"
+      map_path:=/autoware_map
+      vehicle_model:=sample_vehicle
+      sensor_model:=sample_sensor_kit
+      rviz:=false
+      print_include_error:=false
+
   components:
     image: ghcr.io/autowarefoundation/autoware:universe
     volumes:
       - /dev/shm:/dev/shm
       - /etc/localtime:/etc/localtime:ro
-      - ./etc/sample-map-planning:/autoware_map
+      - ./etc/sample-map-planning:/autoware_map:ro
+      - ./etc/launch:/my_launch:ro
     network_mode: "host"
     env_file:
       - ./etc/common.env
     command: >
-      ros2 launch autoware_launch planning_simulator.launch.xml
+      bash /my_launch/launcher.sh
+      config_launch:="autoware_launch planning_simulator.launch.xml"
+      target_launch:="autoware_launch autoware.launch.xml"
       map_path:=/autoware_map
       vehicle_model:=sample_vehicle
       sensor_model:=sample_sensor_kit
       rviz:=false
+      print_include_error:=false
