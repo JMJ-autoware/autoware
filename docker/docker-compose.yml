@@ -11,7 +11,10 @@ services:
     environment:
       - DISPLAY
     command: >
-      rviz2 -d /opt/autoware/share/autoware_launch/rviz/autoware.rviz
+      ros2 run rviz2 rviz2
+      -d /opt/autoware/share/autoware_launch/rviz/autoware.rviz
+      -s /opt/autoware/share/autoware_launch/rviz/image/autoware.png
+      --ros-args -r __node:=rviz2
 
   simulator:
     image: ghcr.io/autowarefoundation/autoware:universe
