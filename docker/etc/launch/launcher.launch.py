@@ -25,7 +25,7 @@ from launch.invalid_launch_file_error import InvalidLaunchFileError
 from launch.substitutions.substitution_failure import SubstitutionFailure
 from ament_index_python.packages import PackageNotFoundError
 
-def remove_unnecessary_entities(context, entity, location, print_include_error=False):
+def remove_unnecessary_entities(context, entity, pattern, print_include_error=False):
     """
     부작용 있음. entity를 수정한다.
     entity 재활용 할 생각하지 말고
@@ -61,9 +61,9 @@ def remove_unnecessary_entities(context, entity, location, print_include_error=F
         except PackageNotFoundError as e:
             return error_process(e)
 
-        if location == src.location:
+        if pattern.match(src.location):
             print('=' * 100)
-            print(f'inc: {location}')
+            print(f'inc: {src.location}')
             print('=' * 100)
             return entity, True
 
@@ -123,19 +123,23 @@ class MyAction(Action):
         self.dest = dest
 
     def visit(self, context: LaunchContext) -> Optional[List[LaunchDescriptionEntity]]:
-        config_launch = self.src.perform(context)
-        target_launch = self.dest.perform(context)
-
+        # config
+        target_pkg_resolve_conf = LaunchConfiguration('target_pkg_resolve', default='true')
+        target_pkg_resolve = cast_substitution(context, target_pkg_resolve_conf, bool)
         print_include_error_conf = LaunchConfiguration('print_include_error', default='false')
         print_include_error = cast_substitution(context, print_include_error_conf, bool)
 
+        # launch
+        config_launch = self.src.perform(context)
+        target_launch = self.dest.perform(context)
+
         config_path = launch_to_path(config_launch)
-        target_path = launch_to_path(target_launch)
+        target = re.compile(launch_to_path(target_launch) if target_pkg_resolve else target_launch)
 
         config_front = FrontendLaunchDescriptionSource(config_path)
         config_desc = config_front.get_launch_description(context)
 
-        tmp = remove_unnecessary_entities(context, config_desc, target_path, print_include_error)
+        tmp = remove_unnecessary_entities(context, config_desc, target, print_include_error)
         assert tmp is not None
 
         launch_desc, exist_target = tmp
@@ -145,7 +149,7 @@ class MyAction(Action):
 
 def generate_launch_description():
     config_launch = LaunchConfiguration('config_launch')
-    target_launch = LaunchConfiguration('target_launch')
+    target_launch = LaunchConfiguration('target_launch', default='None')
 
     my_action = MyAction(config_launch, target_launch)
 
