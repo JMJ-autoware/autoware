@@ -63,7 +63,7 @@ def remove_unnecessary_entities(context, entity, pattern, print_include_error=Fa
 
         if pattern.match(src.location):
             print('=' * 100)
-            print(f'inc: {src.location}')
+            print(f'include: {src.location}')
             print('=' * 100)
             return entity, True
 
