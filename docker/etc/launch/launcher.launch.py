@@ -45,7 +45,7 @@ def remove_unnecessary_entities(context, entity, pattern, print_include_error=Fa
         return (entity, exist) if entity.entities else None
 
     def when_IncludeLaunchDescription(entity):
-        src: LaunchDescriptionSource = entity.launch_description_source
+        src = entity.launch_description_source
 
         def error_process(e):
             if print_include_error:
@@ -71,12 +71,12 @@ def remove_unnecessary_entities(context, entity, pattern, print_include_error=Fa
         if tmp is None:
             return None
 
-        desc, exist = tmp
+        new_desc, exist = tmp
         if not exist:
             return None
-        src = LaunchDescriptionSource(desc)
-        ret = IncludeLaunchDescription(src, launch_arguments=entity.launch_arguments)
-        return ret, True
+
+        desc.entities[:] = new_desc.entities
+        return entity, True
 
     def when_GroupAction(entity):
         entities = entity.get_sub_entities().copy()
